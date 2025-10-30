@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Editar' if book else 'Crear' }} Libro{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">
+                    <i class="bi bi-book"></i>
+                    {{ 'Editar' if book else 'Agregar nuevo' }} libro
+                </h3>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" enctype="multipart/form-data">
+                    <!-- Título -->
+                    <div class="mb-3">
+                        <label for="title" class="form-label fw-semibold">
+                            Título <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="title"
+                               name="title" 
+                               value="{{ book.title if book else '' }}" 
+                               placeholder="Ingrese el título del libro"
+                               required>
+                    </div>
+
+                    <!-- Páginas -->
+                    <div class="mb-3">
+                        <label for="pages" class="form-label fw-semibold">
+                            Páginas <span class="text-danger">*</span>
+                        </label>
+                        <input type="number" 
+                               class="form-control" 
+                               id="pages"
+                               name="pages" 
+                               value="{{ book.pages if book else '' }}" 
+                               placeholder="Número de páginas"
+                               min="1"
+                               required>
+                    </div>
+
+                    <!-- Descripción -->
+                    <div class="mb-3">
+                        <label for="description" class="form-label fw-semibold">
+                            Descripción
+                        </label>
+                        <textarea class="form-control" 
+                                  id="description"
+                                  name="description" 
+                                  rows="4"
+                                  placeholder="Ingrese una breve descripción del libro">{{ book.description if book else '' }}</textarea>
+                        <div class="form-text">Opcional. Máximo 500 caracteres.</div>
+                    </div>
+
+                    <!-- Portada -->
+                    <div class="mb-4">
+                        <label for="cover" class="form-label fw-semibold">
+                            Portada
+                        </label>
+                        <input type="file" 
+                               class="form-control" 
+                               id="cover"
+                               name="cover" 
+                               accept="image/*">
+                        <div class="form-text">Formatos permitidos: JPG, PNG, GIF. Tamaño máximo: 5MB</div>
+                        
+                        <!-- Mostrar portada actual si existe -->
+                        {% if book and book.cover_image %}
+                        <div class="mt-3">
+                            <p class="text-muted mb-2">Portada actual:</p>
+                            <img src="{{ url_for('static', filename='uploads/covers/' + book.cover_image) }}" 
+                                 alt="Portada actual" 
+                                 class="img-thumbnail"
+                                 style="max-width: 200px; max-height: 300px; object-fit: cover;">
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Botones de acción -->
+                    <div class="d-flex gap-2 justify-content-end">
+                        <a href="{{ url_for('book.index') }}" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i>
+                            Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-{{ 'check-circle' if book else 'plus-circle' }}"></i>
+                            {{ 'Actualizar' if book else 'Guardar' }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
