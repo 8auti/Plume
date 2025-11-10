@@ -103,6 +103,7 @@ def edit(id):
         book.title = request.form['title']
         book.pages = request.form.get('pages')
         book.description = request.form.get('description')
+        book.price = request.form.get('price')
         cover = request.files["cover"]
 
         if (cover or cover.filename != ''):
