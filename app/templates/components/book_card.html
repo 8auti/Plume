@@ -1,71 +1,137 @@
 <a href="{{ url_for('book.view', id=book.id) }}" style="text-decoration: none;">
-    <div class="card" style="width: 18rem; position: relative; overflow: hidden;">
-        
-        <!-- Fondo difuminado -->
-        {% if book.cover_url %} 
-            <!-- Sin este if horrible, salta error por todos lados porque el interprete 
-            no entiende que hay un operador ternario en background:image -->
-            <div class="card-background" style="
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-image: url({{book.cover_url}});
-                background-size: cover;
-                background-position: center;
-                filter: blur(10px);
-                opacity: 0.5;
-                z-index: 0;
-            ">
-            </div>
-        {% else %}
-            <div class="card-background" style="
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-image: url('https://placehold.co/400x600');
-                background-size: cover;
-                background-position: center;
-                filter: blur(10px);
-                opacity: 0.5;
-                z-index: 0;
-            ">
-            </div>
-        {% endif %}
-
-        <!-- Contenido de la card -->
-        <div class="row g-0" style="position: relative; z-index: 1;">
-            <div class="col-md-4">
-                <img src="{{ book.cover_url or 'https://placehold.co/400x600' }}" 
-                    class="img-fluid rounded-start"
-                    alt="..."
-                >
-            </div>
-            <div class="col-md-8">
-                <div class="card-body">
-                    <h6 class="card-title">{{ book.title[:40] }}</h6>
-                    <p class="card-text"><small class="text-body-secondary">{{ book.author.name }}</small></p>
+    <div class="book-card">
+        <!-- Portada principal -->
+        <div class="book-cover">
+            <img src="{{ book.cover_url or 'https://placehold.co/400x600' }}" 
+                alt="{{ book.title }}"
+            >
+            <!-- Overlay con info adicional (aparece en hover) -->
+            <div class="book-overlay">
+                <div class="overlay-content">
+                    <p class="book-description">Click para ver detalles</p>
                 </div>
             </div>
+        </div>
+        
+        <!-- Info del libro -->
+        <div class="book-info">
+            <h6 class="book-title">{{ book.title[:40] }}</h6>
+            <p class="book-author">{{ book.author.name }}</p>
         </div>
     </div>
 </a>
 
 <style>
-    .card {
-        transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
-        background-color: rgba(255, 255, 255, 0.9) !important;
+    .book-card {
+        width: 18rem;
+        background: #fff;
+        border-radius: 12px;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
     }
 
-    .card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+    .book-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
     }
 
-    .card:hover .card-background {
-        opacity: 0.4;
+    .book-cover {
+        position: relative;
+        width: 100%;
+        height: 380px;
+        overflow: hidden;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .book-cover img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+    }
+
+    .book-card:hover .book-cover img {
+        transform: scale(1.1);
+    }
+
+    /* Overlay que aparece en hover */
+    .book-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.3) 50%, transparent 100%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        display: flex;
+        align-items: flex-end;
+        padding: 20px;
+    }
+
+    .book-card:hover .book-overlay {
+        opacity: 1;
+    }
+
+    .overlay-content {
+        color: white;
+        transform: translateY(20px);
+        transition: transform 0.3s ease;
+    }
+
+    .book-card:hover .overlay-content {
+        transform: translateY(0);
+    }
+
+    .book-description {
+        margin: 0;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+    /* Info del libro */
+    .book-info {
+        padding: 16px;
+        background: white;
+    }
+
+    .book-title {
+        margin: 0 0 8px 0;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #2d3748;
+        line-height: 1.3;
+        display: -webkit-box;
+        line-clamp: 2;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .book-author {
+        margin: 0;
+        font-size: 0.875rem;
+        color: #718096;
+        font-weight: 400;
+    }
+
+    /* Efecto de brillo sutil */
+    .book-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        transition: left 0.5s ease;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    .book-card:hover::before {
+        left: 100%;
     }
 </style>

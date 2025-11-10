@@ -39,9 +39,9 @@
     </div>
 
     <!-- Grilla de libros -->
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-5">
+     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
         {% for book in books %}
-        <div class="col">
+        <div class="col d-flex justify-content-center">
             {% include 'components/book_card.html' %}
         </div>
         {% endfor %}
@@ -60,5 +60,14 @@
     </div>
     {% endif %}
 </div>
+
+<style>
+    /* Ajusta el ancho de la card para que sea responsive */
+    .book-card {
+        width: 100%;
+        max-width: 18rem;
+        /* ... resto del CSS igual ... */
+    }
+</style>
 
 {% endblock %}

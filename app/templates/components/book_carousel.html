@@ -9,17 +9,68 @@
     .carousel-track {
         display: flex;
         gap: 20px;
-        animation: scroll 40s linear infinite;
         width: fit-content;
-        padding-left: 20px;
-        padding: 10px;
+        padding: 10px 20px;
+        animation: scroll-left 40s linear infinite;
     }
 
     .carousel-container:hover .carousel-track {
         animation-play-state: paused;
     }
 
-    @keyframes scroll {
+    /* Blur/Fade en los costados */
+    .carousel-container::before,
+    .carousel-container::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 6px;
+        z-index: 2;
+        pointer-events: none;
+    }
+
+    /* Fade izquierdo */
+    .carousel-container::before {
+        left: 0;
+        background: linear-gradient(to right, 
+            rgba(255, 255, 255, 1) 0%, 
+            rgba(255, 255, 255, 0.8) 30%,
+            rgba(255, 255, 255, 0) 100%
+        );
+    }
+
+    /* Fade derecho */
+    .carousel-container::after {
+        right: 0;
+        background: linear-gradient(to left, 
+            rgba(255, 255, 255, 1) 0%, 
+            rgba(255, 255, 255, 0.8) 30%,
+            rgba(255, 255, 255, 0) 100%
+        );
+    }
+
+    /* Si quieres blur además del fade, agrega esto: */
+    .carousel-container::before {
+        left: 0;
+        background: linear-gradient(to right, 
+            rgba(255, 255, 255, 1) 0%, 
+            rgba(255, 255, 255, 0) 100%
+        );
+        backdrop-filter: blur(3px);
+    }
+
+    .carousel-container::after {
+        right: 0;
+        background: linear-gradient(to left, 
+            rgba(255, 255, 255, 1) 0%, 
+            rgba(255, 255, 255, 0) 100%
+        );
+        backdrop-filter: blur(3px);
+    }
+
+    /* Animación hacia la izquierda (por defecto) */
+    @keyframes scroll-left {
         0% {
             transform: translateX(0);
         }
@@ -27,12 +78,35 @@
             transform: translateX(-50%);
         }
     }
+
+    /* Animación hacia la derecha */
+    @keyframes scroll-right {
+        0% {
+            transform: translateX(-50%);
+        }
+        100% {
+            transform: translateX(0);
+        }
+    }
 </style>
 
 <div class="carousel-container">
-    <div class="carousel-track">
+    <div class="carousel-track {% if direction == 'right' %}scroll-right{% endif %}">
+        {% for book in books %}
+            {% include 'components/book_card.html' %}
+        {% endfor %}
+        <!-- Segunda fila para simular efecto infinito -->
         {% for book in books %}
             {% include 'components/book_card.html' %}
         {% endfor %}
     </div>
 </div>
+
+<script>
+    // Cambia la animación según la dirección
+    document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll(".carousel-track.scroll-right").forEach(track => {
+            track.style.animationName = "scroll-right";
+        });
+    });
+</script>

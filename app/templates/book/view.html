@@ -69,11 +69,11 @@
     
     <!-- Contenido principal con fondo blanco -->
     <div class="bg-white">
-        <div class="container py-5 w-75">
+        <div class="container py-5 w-90">
 
             <!-- Sección: Sinopsis -->
             <div class="mb-5">
-                <h3 class="fw-bold mb-3"> <i class="bi bi-card-text"></i>  Sinopsis</h3>
+                <h3 class="fw-bold mb-3"><i class="bi bi-card-text"></i> Sinopsis</h3>
                 <p class="text-muted lh-lg">
                     {{ book.description if book.description else 'No hay descripción disponible para este libro.' }}
                 </p>
@@ -88,10 +88,21 @@
                 </div>
             </div>
 
+            <!-- Sección: Libros por el autor -->
+            <div class="container mb-5">
+                <h3 class="fw-bold mb-4">Otros libros de <strong class="fw-normal">{{ book.author.name }}</strong></h3>
+                <div class="row row-cols-2 row-cols-md-4 g-3">
+                    {% set books = same_author_books %}
+                    {% include 'components/book_carousel.html' %}
+                </div>
+            </div>
+
             <!-- Sección: Libros recomendados -->
             <div>
                 <h3 class="fw-bold mb-4">También te puede gustar</h3>
                 <div class="row row-cols-2 row-cols-md-4 g-3">
+                    {% set direction = 'right' %}
+                    {% set books = related_books %}
                     {% include 'components/book_carousel.html' %}
                 </div>
             </div>
