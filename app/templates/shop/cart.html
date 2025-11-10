@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block title %}Carrito de Compras{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-4">
+        <i class="bi bi-cart-fill me-2 text-primary"></i>
+        Mi Carrito
+    </h2>
+
+    {% if cart.items %}
+    <div class="row">
+        <!-- Lista de items del carrito -->
+        <div class="col-lg-8 mb-4">
+            {% for item in cart.items %}
+            <div class="card mb-3 shadow-sm">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <!-- Imagen del libro -->
+                        <div class="col-md-2">
+                            <img src="{{ item.book.cover_url or 'https://placehold.co/100x100' }}" 
+                                 class="img-fluid rounded text-center" 
+                                 style="object-fit: contain; max-height: 100px;"
+                                 alt="{{ item.title }}">
+                        </div>
+                        
+                        <!-- Información del libro -->
+                        <div class="col-md-5">
+                            <h5 class="mb-1">{{ item.book.title }}</h5>
+                            <p class="text-muted mb-0">
+                                <small>{{ item.book.author.name }}</small>
+                            </p>
+                        </div>
+                        
+                        <!-- Cantidad -->
+                        <div class="col-md-2 text-center">
+                            <div class="d-flex justify-content-center align-items-center gap-2">
+                                <!-- Botón decrementar -->
+                                <form action="{{ url_for('shop.update_quantity', item_id=item.id) }}" method="POST" style="display: inline;">
+                                    <input type="hidden" name="quantity" value="{{ item.quantity - 1 }}">
+                                    <button class="btn btn-outline-secondary btn-sm" type="submit">
+                                        <i class="bi bi-dash"></i>
+                                    </button>
+                                </form>
+                                
+                                <!-- Cantidad -->
+                                <span class="mx-2">{{ item.quantity }}</span>
+                                
+                                <!-- Botón incrementar -->
+                                <form action="{{ url_for('shop.update_quantity', item_id=item.id) }}" method="POST" style="display: inline;">
+                                    <input type="hidden" name="quantity" value="{{ item.quantity + 1 }}">
+                                    <button class="btn btn-outline-secondary btn-sm" type="submit">
+                                        <i class="bi bi-plus"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        
+                        <!-- Precio -->
+                        <div class="col-md-2 text-end">
+                            <h5 class="mb-0">${{ item.book.price * item.quantity }}</h5>
+                            <small class="text-muted">${{ item.book.price }} c/u</small>
+                        </div>
+                        
+                        <!-- Botón eliminar -->
+                        <div class="col-md-1 text-end">
+                            <form action="{{ url_for('shop.remove_from_cart', item_id=item.id) }}" method="POST">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                    <strong>x</strong>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            
+            <!-- Botón continuar comprando -->
+            <a href="{{ url_for('shop.index') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>
+                Continuar Comprando
+            </a>
+        </div>
+
+        <!-- Resumen del pedido -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm sticky-top" style="top: 20px;">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Resumen del Pedido</h5>
+                    
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Precio</span>
+                        <span>${{ cart.subtotal }}</span>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Envío</span>
+                        <span class="text-success">Gratis</span>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>IVA (21%)</span>
+                        <span>${{ cart.total - cart.subtotal }}</span>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="d-flex justify-content-between mb-4">
+                        <strong>Total</strong>
+                        <strong class="text-primary fs-4">${{ cart.total }}</strong>
+                    </div>
+                    
+                    <a href="{{ url_for('shop.checkout') }}" class="btn btn-primary w-100 mb-2">
+                        <i class="bi bi-credit-card me-2"></i>
+                        Proceder al Pago
+                    </a>
+                    
+                    <div class="text-center mt-3">
+                        <small class="text-muted">
+                            <i class="bi bi-shield-check me-1"></i>
+                            Compra 100% segura
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% else %}
+    <!-- Carrito vacío -->
+    <div class="text-center py-5">
+        <i class="bi bi-cart-x display-1 text-muted mb-4"></i>
+        <h3 class="mb-3">Tu carrito está vacío</h3>
+        <p class="text-muted mb-4">Agrega algunos libros para comenzar tu colección</p>
+        <a href="{{ url_for('shop.index') }}" class="btn btn-primary">
+            <i class="bi bi-book me-2"></i>
+            Explorar Libros
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .card {
+        border: none;
+        border-radius: 12px;
+        transition: transform 0.2s ease;
+    }
+    
+    .card:hover {
+        transform: translateY(-2px);
+    }
+    
+    .input-group-sm .form-control {
+        max-width: 60px;
+    }
+</style>
+{% endblock %}

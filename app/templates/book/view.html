@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ book.title }} - Plume{% endblock %}
+
+{% block content %}
+<div class="book-detail-page">
+    <!-- Header con imagen de fondo difuminada -->
+    <div class="book-header position-relative text-white py-5" style="min-height: 400px;">
+
+        <!-- Imagen de portada difuminada como fondo -->
+        <img src="{{ book.cover_url or 'https://placehold.co/600x400'}}" 
+            class="position-fixed top-0 start-0 w-100 h-100 object-fit-cover" 
+            style="filter: blur(40px) brightness(0.6); z-index: -2;"
+            alt="Background">
+
+        <!-- Overlay oscuro -->
+        <div class="position-fixed top-0 start-0 w-100 h-100 bg-dark" 
+             style="opacity: 0.3; z-index: -1;"></div>
+        
+        <div class="container">
+            <div class="row align-items-center">
+                <!-- Portada del libro -->
+                <div class="col-md-4 text-center text-md-start mb-4 mb-md-0">
+                    <img src="{{ book.cover_url or 'https://placehold.co/400x600' }}" class="img-fluid rounded shadow-lg book-cover-large"
+                        style="max-width: 280px;" alt="{{ book.title }}">
+                </div>
+                
+                <!-- Información del libro -->
+                <div class="col-md-8">
+                    <h1 class="display-4 fw-bold mb-3">{{ book.title }}</h1>
+                    
+                    <!-- Autor con avatar -->
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center me-2" 
+                             style="width: 50px; height: 50px;">
+                            <span class="fw-bold">{{ book.author.name[0] if book.author.name else '?' }}</span>
+                        </div>
+                        <div>
+                            <h5 class="mb-0">{{ book.author.name if book.author.name else 'Autor desconocido' }}</h5>
+                            <small class="opacity-75">{{ book.author.books | length if book.author.books | length else '0' }} Publicaciones | {{ book.followers if book.followers else '0' }} Seguidores</small>
+                        </div>
+                    </div>
+                    
+                    <!-- Rating -->
+                    <div class="mb-4">
+                        <span class="fs-5">
+                            ★★★★★ <span class="ms-2">{{ book.rating if book.rating else '5.0' }}</span>
+                        </span>
+                    </div>
+                    
+                    <!-- Botones de acción -->
+                    <div class="d-flex flex-wrap gap-3">
+                        <form action="{{ url_for('shop.add_to_cart', book_id=book.id) }}" method="POST" style="display: inline;">
+                            <button type="submit" class="btn btn-primary btn-lg px-4 rounded-pill">
+                                COMPRAR ${{ "%.1f"|format(book.price) if book.price else '15000.0' }}
+                            </button>
+                        </form>
+                        <button class="btn btn-light btn-lg px-4 rounded-pill disabled">
+                            Muestra Gratis
+                        </button>
+                        <button class="btn btn-outline-light btn-lg rounded-pill">
+                            <i class="bi bi-bookmark"></i> A la Lista
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Contenido principal con fondo blanco -->
+    <div class="bg-white">
+        <div class="container py-5">
+            <div class="row">
+                <!-- Columna izquierda - About -->
+                <div class="col-lg-6 mb-4">
+                    <h3 class="fw-bold mb-3">About</h3>
+                    <p class="text-muted lh-lg">
+                        {{ book.description if book.description else 'No hay descripción disponible para este libro.' }}
+                    </p>
+                    
+                    <!-- Géneros/Tags -->
+                    <div class="mt-4">
+                        {% if book.genre %}
+                        <span class="badge bg-primary rounded-pill px-3 py-2 me-2">{{ book.genre }}</span>
+                        {% endif %}
+                        <span class="badge bg-info rounded-pill px-3 py-2 me-2">Aventura</span>
+                        <span class="badge bg-success rounded-pill px-3 py-2">Magia</span>
+                    </div>
+                </div>
+                
+                <!-- Columna derecha - También te puede gustar -->
+                <div class="col-lg-6">
+                    <h3 class="fw-bold mb-4">También te puede gustar</h3>
+                    
+                    <div class="row row-cols-2 row-cols-md-3 g-3">
+                        {% include 'components/book_carousel.html' %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .book-header {
+        min-height: 400px;
+    }
+    
+    .book-cover-large {
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        transition: transform 0.3s ease;
+    }
+    
+    .book-cover-large:hover {
+        transform: scale(1.05);
+    }
+    
+    .card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        cursor: pointer;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    .btn-primary {
+        background: #1e90ff;
+        border: none;
+    }
+    
+    .btn-primary:hover {
+        background: #1873cc;
+    }
+</style>
+
+{% endblock %}

@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Editar' if book else 'Crear' }} Libro{% endblock %}
+
+{% block content %}
+<div class="d-flex">
+    {% include 'components/admin_panel.html' %}
+
+    <!-- Main Content -->
+    <div class="flex-grow-1 p-4">
+        <div class="container-fluid">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="mb-1">
+                        <i class="bi bi-{{ 'pencil-square' if book else 'plus-square' }} me-2 text-primary"></i>
+                        {{ 'Editar' if book else 'Nuevo' }} Libro
+                    </h2>
+                    <p class="text-muted mb-0">
+                        {{ 'Modifica la información del libro' if book else 'Completa la información del nuevo libro' }}
+                    </p>
+                </div>
+                <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-1"></i>
+                    Volver
+                </a>
+            </div>
+
+            <div class="row">
+                <!-- Formulario Principal -->
+                <div class="col-lg-8">
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="card shadow-sm mb-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Información General</h5>
+                            </div>
+                            <div class="card-body">
+                                <!-- Título -->
+                                <div class="mb-3">
+                                    <label for="title" class="form-label fw-semibold">
+                                        Título <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" 
+                                           class="form-control form-control-lg" 
+                                           id="title"
+                                           name="title" 
+                                           value="{{ book.title if book else '' }}" 
+                                           placeholder="Ej: El Principito"
+                                           required>
+                                </div>
+
+                                <!-- Descripción -->
+                                <div class="mb-3">
+                                    <label for="description" class="form-label fw-semibold">
+                                        Descripción
+                                    </label>
+                                    <textarea class="form-control" 
+                                              id="description"
+                                              name="description" 
+                                              rows="5"
+                                              placeholder="Escribe una descripción atractiva del libro..."
+                                            >{{ book.description if book else '' }}</textarea>
+                                    <div class="form-text">Una buena descripción ayuda a los lectores a descubrir tu libro.</div>
+                                </div>
+
+                                <!-- Precio y Páginas en fila -->
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="price" class="form-label fw-semibold">
+                                            Precio (ARS) <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">$</span>
+                                            <input type="number" 
+                                                   class="form-control" 
+                                                   id="price"
+                                                   name="price" 
+                                                   value="{{ book.price if book else '15000.0' }}"
+                                                   step="100"
+                                                   min="5000"
+                                                   placeholder="15000.0"
+                                                   required>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 mb-3">
+                                        <label for="pages" class="form-label fw-semibold">
+                                            Páginas <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="number" 
+                                               class="form-control" 
+                                               id="pages"
+                                               name="pages" 
+                                               value="{{ book.pages if book else '' }}" 
+                                               placeholder="250"
+                                               min="1"
+                                               required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Portada -->
+                        <div class="card shadow-sm mb-4">
+                            <div class="card-header bg-white">
+                                <h5 class="mb-0">Portada del Libro</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <label for="cover" class="form-label fw-semibold">
+                                            Imagen de portada
+                                        </label>
+                                        <input type="file" 
+                                               class="form-control" 
+                                               id="cover"
+                                               name="cover" 
+                                               accept="image/*">
+                                        <div class="form-text">
+                                            <i class="bi bi-info-circle me-1"></i>
+                                            JPG, PNG o GIF. Tamaño recomendado: 600x900px. Máximo: 5MB
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Preview de portada actual -->
+                                    {% if book and book.cover_url %}
+                                    <div class="col-md-4">
+                                        <p class="text-muted mb-2 small">Vista previa actual:</p>
+                                        <img src="{{ book.cover_url }}" 
+                                             alt="Portada actual" 
+                                             class="img-fluid rounded shadow-sm"
+                                             style="max-height: 200px; object-fit: cover;">
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Botones de acción fijos al fondo -->
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex gap-2 justify-content-between align-items-center">
+                                    <small class="text-muted">
+                                        <i class="bi bi-asterisk text-danger"></i>
+                                        Campos requeridos
+                                    </small>
+                                    <div class="d-flex gap-2">
+                                        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary">
+                                            <i class="bi bi-x-lg me-1"></i>
+                                            Cancelar
+                                        </a>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="bi bi-{{ 'save' if book else 'plus-lg' }} me-1"></i>
+                                            {{ 'Actualizar Libro' if book else 'Publicar Libro' }}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Panel lateral con información -->
+                <div class="col-lg-4">
+                    <div class="card shadow-sm sticky-top" style="top: 20px;">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0">
+                                <i class="bi bi-lightbulb me-2"></i>
+                                Consejos
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <h6 class="fw-bold">✍️ Título atractivo</h6>
+                                <p class="small text-muted mb-0">Elige un título memorable que capte la atención de los lectores.</p>
+                            </div>
+                            <hr>
+                            <div class="mb-3">
+                                <h6 class="fw-bold">📖 Descripción completa</h6>
+                                <p class="small text-muted mb-0">Incluye el género, temas principales y qué hace único a tu libro.</p>
+                            </div>
+                            <hr>
+                            <div class="mb-3">
+                                <h6 class="fw-bold">🎨 Portada profesional</h6>
+                                <p class="small text-muted mb-0">Una buena portada puede aumentar tus ventas hasta un 40%.</p>
+                            </div>
+                            <hr>
+                            <div>
+                                <h6 class="fw-bold">💰 Precio competitivo</h6>
+                                <p class="small text-muted mb-0">El precio promedio de e-books está entre $2.99 y $9.99.</p>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-light">
+                            <small class="text-muted">
+                                <i class="bi bi-question-circle me-1"></i>
+                                ¿Necesitas ayuda? <a href="#" class="text-decoration-none">Contáctanos</a>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border: none;
+        border-radius: 12px;
+    }
+    
+    .card-header {
+        border-radius: 12px 12px 0 0 !important;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    
+    .form-control:focus, .form-control-lg:focus {
+        border-color: var(--bs-primary);
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+    }
+</style>
+{% endblock %}

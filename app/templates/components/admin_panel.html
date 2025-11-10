@@ -1,0 +1,70 @@
+<!-- Sidebar -->
+<div class="sidebar bg-light border-end p-3" style="width: 250px; min-height: 100vh;">
+    <h4 class="mb-4 text-dark">
+        <i class="bi bi-book me-2 text-primary"></i>
+        Plume Admin
+    </h4>
+
+    <ul class="nav flex-column">
+        <li class="nav-item mb-2">
+            <a href="{{ url_for('admin.dashboard') }}" 
+               class="nav-link text-dark {{ 'active' if request.endpoint == 'admin.dashboard' else '' }}">
+                <i class="bi bi-grid-fill me-2"></i>
+                Mis Libros
+            </a>
+        </li>
+        <li class="nav-item mb-2">
+            <a href="{{ url_for('admin.create') }}" 
+               class="nav-link text-dark {{ 'active' if request.endpoint == 'admin.create' else '' }}">
+                <i class="bi bi-plus-circle-fill me-2"></i>
+                Nuevo Libro
+            </a>
+        </li>
+        <li class="nav-item mb-2">
+            <a href="#" class="nav-link text-dark">
+                <i class="bi bi-journal-text me-2"></i>
+                Manuscritos
+            </a>
+        </li>
+        <li class="nav-item mb-2">
+            <a href="#" class="nav-link text-dark">
+                <i class="bi bi-cash-coin me-2"></i>
+                Ventas
+            </a>
+        </li>
+    </ul>
+
+    <hr>
+
+    <ul class="nav flex-column">
+        <li class="nav-item mb-2">
+            <a href="#" class="nav-link text-dark">
+                <i class="bi bi-gear-fill me-2"></i>
+                Configuración
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ url_for('shop.index') }}" 
+               class="nav-link text-dark {{ 'active' if request.endpoint == 'shop.index' else '' }}">
+                <i class="bi bi-house-fill me-2"></i>
+                Ir a Tienda
+            </a>
+        </li>
+    </ul>
+</div>
+
+<style>
+    .sidebar .nav-link {
+        border-radius: 8px;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    
+    .sidebar .nav-link:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+    
+    .sidebar .nav-link.active {
+        background-color: var(--bs-primary);
+        color: white !important;
+    }
+</style>

@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Gestión de Libros{% endblock %}
+
+{% block content %}
+<div class="d-flex">
+    {% include 'components/admin_panel.html' %}
+
+    <!-- Main Content -->
+    <div class="flex-grow-1 p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Libros registrados</h2>
+            <a href="{{ url_for('admin.create') }}" class="btn btn-primary">
+                <i class="bi bi-plus-lg me-1"></i>
+                Agregar nuevo libro
+            </a>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Título</th>
+                            <th>Páginas</th>
+                            <th>Actualizado</th>
+                            <th>Creacion</th>
+                            <th>Escritor</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if books %}
+                            {% for b in books %}
+                            <tr>
+                                <td>{{ b.id }}</td>
+                                <td><strong>{{ b.title }}</strong></td>
+                                <td>{{ b.pages }}</td>
+                                <td>{{ b.last_update }}</td>
+                                <td>{{ b.publish_date }}</td>
+                                <td>{{ b.author.name }}</td>
+
+                                <!-- Eliminar y Editar -->
+                                <td>
+                                    <a href="{{ url_for('admin.edit', id=b.id) }}" class="btn btn-sm btn-outline-primary me-2">
+                                        <i class="bi bi-pencil-fill"></i>
+                                        Editar
+                                    </a>
+                                    <form action="{{ url_for('admin.delete', id=b.id) }}" method="POST" style="display: inline;">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Eliminar este libro?')">
+                                            <i class="bi bi-trash-fill"></i>
+                                            Eliminar
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="4" class="text-center py-5 text-muted">
+                                    <i class="bi bi-inbox display-4 d-block mb-3"></i>
+                                    No hay libros registrados
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border: none;
+        border-radius: 12px;
+    }
+    
+    .table th {
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.5px;
+    }
+
+    .table tr {
+        font-size: 0.7rem;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% if pagination and pagination.pages > 1 %}
+<div class="mt-5 d-flex justify-content-center">
+    <nav aria-label="Navegación de páginas">
+        <ul class="pagination">
+            <!-- Botón Anterior -->
+            <li class="page-item {% if not pagination.has_prev %}disabled{% endif %}">
+                <a class="page-link"
+                    href="{% if pagination.has_prev %}{{ url_for('shop.index', page=pagination.prev_num) }}{% else %}#{% endif %}"
+                    tabindex="-1">
+                    Anterior
+                </a>
+            </li>
+
+            <!-- Primera página -->
+            {% if pagination.page > 3 %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('shop.index', page=1) }}">1</a>
+            </li>
+            {% if pagination.page > 4 %}
+            <li class="page-item disabled">
+                <span class="page-link">...</span>
+            </li>
+            {% endif %}
+            {% endif %}
+
+            <!-- Páginas cercanas -->
+            {% for page_num in range([pagination.page - 2, 1]|max, [pagination.page + 2, pagination.pages]|min + 1) %}
+            <li class="page-item {% if page_num == pagination.page %}active{% endif %}">
+                <a class="page-link" href="{{ url_for('shop.index', page=page_num) }}">
+                    {{ page_num }}
+                </a>
+            </li>
+            {% endfor %}
+
+            <!-- Última página -->
+            {% if pagination.page < pagination.pages - 2 %} 
+                {% if pagination.page < pagination.pages - 3 %} 
+                    <li class="page-item disabled">
+                        <span class="page-link">...</span>
+                    </li>
+                {% endif %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('shop.index', page=pagination.pages) }}">{{ pagination.pages}}</a>
+                </li>
+            {% endif %}
+
+            <!-- Botón Siguiente -->
+            <li class="page-item {% if not pagination.has_next %}disabled{% endif %}">
+                <a class="page-link"
+                    href="{% if pagination.has_next %}{{ url_for('shop.index', page=pagination.next_num) }}{% else %}#{% endif %}">
+                    Siguiente
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+{% endif %}

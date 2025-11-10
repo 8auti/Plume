@@ -1,0 +1,38 @@
+<style>
+    .carousel-container {
+        width: 100%;
+        overflow-x: hidden;
+        overflow-y: visible;
+        position: relative;
+    }
+
+    .carousel-track {
+        display: flex;
+        gap: 20px;
+        animation: scroll 40s linear infinite;
+        width: fit-content;
+        padding-left: 20px;
+        padding: 10px;
+    }
+
+    .carousel-container:hover .carousel-track {
+        animation-play-state: paused;
+    }
+
+    @keyframes scroll {
+        0% {
+            transform: translateX(0);
+        }
+        100% {
+            transform: translateX(-50%);
+        }
+    }
+</style>
+
+<div class="carousel-container">
+    <div class="carousel-track">
+        {% for book in books %}
+            {% include 'components/book_card.html' %}
+        {% endfor %}
+    </div>
+</div>

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Iniciar Sesión{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="col-md-5 col-lg-4">
+        <div class="card shadow">
+            <div class="card-body p-4">
+                <!-- Logo/Título -->
+                <div class="text-center mb-4">
+                    <h2 class="fw-bold">Iniciar Sesión</h2>
+                    <p class="text-muted">Accede a tu cuenta</p>
+                </div>
+
+                <!-- Formulario -->
+                <form method="POST">
+                    <!-- Email -->
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" 
+                               class="form-control" 
+                               id="email" 
+                               name="email" 
+                               placeholder="tu@email.com"
+                               required>
+                    </div>
+
+                    <!-- Contraseña -->
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Contraseña</label>
+                        <input type="password" 
+                               class="form-control" 
+                               id="password" 
+                               name="password" 
+                               placeholder="••••••••"
+                               required>
+                    </div>
+
+                    <!-- Recordarme (opcional) -->
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                        <label class="form-check-label" for="remember">
+                            Recordarme
+                        </label>
+                    </div>
+
+                    <!-- Botón -->
+                    <button type="submit" class="btn btn-primary w-100 mb-3">
+                        Ingresar
+                    </button>
+
+                    <!-- Link registro (opcional) -->
+                    <div class="text-center">
+                        <small class="text-muted">
+                            ¿No tienes cuenta? 
+                            <a href="{{ url_for('auth.register') }}">Regístrate aquí</a>
+                        </small>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

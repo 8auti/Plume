@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Registrarse{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="col-md-5 col-lg-6">
+        <div class="card shadow">
+            <div class="card-body p-4">
+                <!-- Logo/Título -->
+                <div class="text-center mb-4">
+                    <h2 class="fw-bold">Crear Cuenta</h2>
+                    <p class="text-muted">Únete a Plume</p>
+                </div>
+
+                <!-- Formulario -->
+                <form method="POST">
+                    <!-- Nombre -->
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Nombre completo</label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="name" 
+                               name="name" 
+                               placeholder="Juan Pérez"
+                               required>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" 
+                               class="form-control" 
+                               id="email" 
+                               name="email" 
+                               placeholder="tu@email.com"
+                               required>
+                    </div>
+
+                    <!-- Contraseña -->
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Contraseña</label>
+                        <input type="password" 
+                               class="form-control" 
+                               id="password" 
+                               name="password" 
+                               placeholder="••••••••"
+                               minlength="6"
+                               required>
+                        <div class="form-text">Mínimo 6 caracteres</div>
+                    </div>
+
+                    <!-- Confirmar Contraseña -->
+                    <div class="mb-3">
+                        <label for="password_confirm" class="form-label">Confirmar contraseña</label>
+                        <input type="password" 
+                               class="form-control" 
+                               id="password_confirm" 
+                               name="password_confirm" 
+                               placeholder="••••••••"
+                               minlength="6"
+                               required>
+                    </div>
+
+                    <!-- Tipo de usuario -->
+                    <div class="mb-3">
+                        <label for="user_type" class="form-label">Tipo de usuario</label>
+                        <select class="form-select" id="user_type" name="user_type" required>
+                            <option value="">Selecciona una opción</option>
+                            <option value="escritor">Escritor</option>
+                            <option value="editor">Editor</option>
+                        </select>
+                    </div>
+
+                    <!-- Botón -->
+                    <button type="submit" class="btn btn-primary w-100 mb-3">
+                        Registrarse
+                    </button>
+
+                    <!-- Link login -->
+                    <div class="text-center">
+                        <small class="text-muted">
+                            ¿Ya tienes cuenta? 
+                            <a href="{{ url_for('auth.login') }}">Inicia sesión aquí</a>
+                        </small>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

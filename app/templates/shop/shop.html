@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}Explorar Libros - Plume{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+    <!-- Barra de búsqueda y filtros -->
+    <div class="row mb-4">
+        <div class="col-md-8 mb-3 mb-md-0">
+            <div class="input-group">
+                <input type="text" class="form-control" id="searchInput" placeholder="Buscar por título o autor...">
+                <button class="btn btn-outline-secondary" type="button">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <select class="form-select" id="genreFilter">
+                <option value="">Todos los géneros</option>
+                <option value="ficcion">Ficción</option>
+                <option value="no-ficcion">No ficción</option>
+                <option value="fantasia">Fantasía</option>
+                <option value="ciencia-ficcion">Ciencia ficción</option>
+                <option value="romance">Romance</option>
+                <option value="misterio">Misterio</option>
+                <option value="terror">Terror</option>
+                <option value="biografia">Biografía</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Contador de resultados -->
+    {% if books %}
+    <div class="mb-3">
+        <p class="text-muted">
+            <small>Mostrando {{ books|length }} libro{% if books|length != 1 %}s{% endif %}</small>
+        </p>
+    </div>
+
+    <!-- Grilla de libros -->
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-5">
+        {% for book in books %}
+        <div class="col">
+            {% include 'components/book_card.html' %}
+        </div>
+        {% endfor %}
+    </div>
+
+    {% include 'components/pagination.html' %}
+
+    {% else %}
+    <!-- Sin resultados -->
+    <div class="text-center py-5">
+        <div class="mb-4">
+            <i class="bi bi-book" style="font-size: 4rem; color: #ccc;"></i>
+        </div>
+        <h3 class="text-muted mb-3">No hay libros disponibles</h3>
+        <p class="text-muted">Vuelve más tarde para descubrir nuevas publicaciones</p>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

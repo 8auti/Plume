@@ -1,0 +1,134 @@
+import os
+import boto3
+import mimetypes
+
+from flask import Blueprint, render_template, request, flash, url_for, redirect
+from flask_login import login_required, current_user
+from werkzeug.utils import secure_filename
+from ..models.models import Book, database
+from dotenv import load_dotenv
+
+# Acceder a variables de entorno
+load_dotenv()
+
+AWS_ACCESS_KEY_ID = os.getenv("ACCESS_KEY_S3")
+AWS_SECRET_ACCESS_KEY = os.getenv("SECRET_KEY_ACCESS_S3")
+AWS_S3_BUCKET_NAME = os.getenv("AWS_S3_BUCKET_NAME", "da-vinci-ejemplo1")
+
+admin = Blueprint("admin", __name__)
+
+# Dashboard
+
+@admin.route("/admin")
+@login_required
+def dashboard():
+    # TODO: Agregar paginacion
+    books = Book.query.all()
+    return render_template("admin/dashboard.html", books = books)
+
+
+# Funcion para subir archivos a AWS
+
+def upload_image(file):
+    filename = secure_filename(file.filename)
+    if not filename:
+        return render_template("upload.html", error="El archivo no tiene un nombre válido")
+
+    content_type = mimetypes.guess_type(filename)[0] or "application/octet-stream"
+
+    try:
+        # Crear cliente de S3
+        s3 = boto3.client(
+            "s3",
+            aws_access_key_id=AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=AWS_SECRET_ACCESS_KEY
+        )
+
+        # Subir archivo a S3
+        s3.upload_fileobj(
+            file,
+            AWS_S3_BUCKET_NAME,
+            filename,
+            ExtraArgs={"ContentType": content_type}
+        )
+
+        # URL pública
+        file_url = f"https://{AWS_S3_BUCKET_NAME}.s3.amazonaws.com/{filename}"
+
+        return file_url
+
+    except Exception as e:
+        flash("Error al subir la imagen.", "danger")
+
+# Crear libro
+
+@admin.route("/admin/create/", methods=["GET", "POST"])
+@login_required
+def create():
+    if request.method == "POST":
+        title = request.form["title"]
+        pages = request.form["pages"]
+        description = request.form["description"]
+        price = request.form["price"]
+        cover = request.files["cover"]
+
+        if (not title or not pages or not price):
+            flash("Completa todos los campos", "danger")
+            return redirect(url_for('admin.create'))
+
+        # Portada
+        cover_url = upload_image(cover)
+
+        # fk usuario escritor
+        author_id = current_user.id
+
+        new_book = Book(title=title, pages=pages, description=description, author_id=author_id, cover_url = cover_url)
+
+        database.session.add(new_book)
+        database.session.commit()
+        flash("Libro agregado exitosamente", "success")
+
+        return redirect(url_for('admin.dashboard'))
+    return render_template("admin/form.html")
+
+
+# Editar libro
+
+@admin.route("/admin/edit/<int:id>", methods=["GET", "POST"])
+@login_required
+def edit(id):
+    book = Book.query.get_or_404(id)
+    
+    if request.method == "POST":
+        book.title = request.form['title']
+        book.pages = request.form.get('pages')
+        book.description = request.form.get('description')
+        cover = request.files["cover"]
+
+        if (cover or cover.filename != ''):
+            book.cover_url = upload_image(cover) or book.cover_url
+
+        database.session.commit()
+        flash(f"Libro actualizado con exito.", "success")
+
+        return redirect(url_for('admin.dashboard'))
+    
+    return render_template('admin/form.html', book=book)  # pasa el libro
+
+
+
+# Eliminar libro
+
+@admin.route("/admin/delete/<int:id>", methods=["POST", "GET"])
+@login_required
+def delete(id):
+    book = Book.query.get(id)
+    if book is None:
+        flash("Libro no encontrado", "error")
+        return redirect(url_for('admin.dashboard'))
+    
+    database.session.delete(book)
+    database.session.commit()
+
+    flash(f"Libro '{book.title}' eliminado exitosamente", "danger")
+    return redirect(url_for('admin.dashboard'))  # Redirige a la lista de libros
