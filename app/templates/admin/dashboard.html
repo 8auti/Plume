@@ -37,23 +37,27 @@
                                 <td>{{ b.id }}</td>
                                 <td><strong>{{ b.title }}</strong></td>
                                 <td>{{ b.pages }}</td>
-                                <td>{{ b.last_update }}</td>
-                                <td>{{ b.publish_date }}</td>
+                                <td>{{ b.last_update|humanize }}</td>
+                                <td>{{ b.publish_date|humanize }}</td>
                                 <td>{{ b.author.name }}</td>
 
                                 <!-- Eliminar y Editar -->
+                                
                                 <td>
                                     <a href="{{ url_for('admin.edit', id=b.id) }}" class="btn btn-sm btn-outline-primary me-2">
                                         <i class="bi bi-pencil-fill"></i>
                                         Editar
                                     </a>
+                                    {% if current_user.type == 'escritor' %}
                                     <form action="{{ url_for('admin.delete', id=b.id) }}" method="POST" style="display: inline;">
                                         <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Eliminar este libro?')">
                                             <i class="bi bi-trash-fill"></i>
                                             Eliminar
                                         </button>
                                     </form>
+                                    {% endif %}
                                 </td>
+
                             </tr>
                             {% endfor %}
                         {% else %}

@@ -18,3 +18,4 @@ blinker==1.9.0
 # --- Otros ---
 boto3
 python-dotenv
+arrow

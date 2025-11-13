@@ -23,8 +23,14 @@ admin = Blueprint("admin", __name__)
 @admin.route("/admin")
 @login_required
 def dashboard():
+    # El escritor ve solo sus libros
+    if current_user.type == 'escritor':
+        books = Book.query.filter_by(author_id=current_user.id).all()
+    # El editor ve todos los libros
+    elif current_user.type == 'editor':
+        books = Book.query.all()
+
     # TODO: Agregar paginacion
-    books = Book.query.all()
     return render_template("admin/dashboard.html", books = books)
 
 
@@ -109,29 +115,39 @@ def create():
 
 # Editar libro
 
+
 @admin.route("/admin/edit/<int:id>", methods=["GET", "POST"])
 @login_required
 def edit(id):
     book = Book.query.get_or_404(id)
     
     if request.method == "POST":
-        book.title = request.form['title']
-        book.pages = request.form.get('pages')
-        book.description = request.form.get('description')
-        book.price = request.form.get('price')
-        genre = request.form.get('genre')
-        cover = request.files["cover"]
+        if current_user.type == 'escritor':
 
-        # Validar que el genero sea autentico
-        if (genre not in genres and genre != ''): # Permitir que el genero sea un string vacio (Ninguno)
-            flash("Genero invalido.", "danger")
-            return render_template('admin/form.html', book=book, genres = genres)
+            book.title = request.form['title']
+            book.pages = request.form.get('pages')
+            book.description = request.form.get('description')
+            book.price = request.form.get('price')
+            genre = request.form.get('genre')
+            cover = request.files["cover"]
 
-        book.genre = genre
+            # Validar que el genero sea autentico
+            if (genre not in genres and genre != ''): # Permitir que el genero sea un string vacio (Ninguno)
+                flash("Genero invalido.", "danger")
+                return render_template('admin/form.html', book=book, genres = genres)
 
-        if (cover or cover.filename != ''):
-            book.cover_url = upload_image(cover) or book.cover_url
+            book.genre = genre
 
+            if (cover or cover.filename != ''):
+                book.cover_url = upload_image(cover) or book.cover_url
+
+        elif current_user.type == 'editor':
+
+            book.status = request.form['status'] or 'pendiente'
+            book.published_books = request.form.get('books_to_publish') or 0
+            book.profit_percentage = request.form.get('profit_percentage') or 0
+
+        # Guardar datos
         database.session.commit()
         flash(f"Libro actualizado con exito.", "success")
 

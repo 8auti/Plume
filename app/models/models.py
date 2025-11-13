@@ -10,7 +10,7 @@ class User(UserMixin, database.Model):
     name = database.Column(database.String(100), nullable=False)
     password_hash = database.Column(database.String(255), nullable=False)
     email = database.Column(database.String(50), nullable=False, unique=True)
-    type = database.Column(database.String(50), nullable=False) # writer, editor
+    type = database.Column(database.String(50), nullable=False, default='user') # writer, editor, user
     created_at = database.Column(database.DateTime, default=database.func.now())
 
 class Book(database.Model):
@@ -22,8 +22,11 @@ class Book(database.Model):
     genre = database.Column(database.String(20), nullable=False)
     pages = database.Column(database.Integer, nullable=True)
     price = database.Column(database.Float, default=15000.0)
-    status = database.Column(database.String(50), default='draft')  # draft, in_review, approved, published
     cover_url = database.Column(database.String(200), nullable=True)
+
+    status = database.Column(database.String(50), default='pendiente')  # pendiente, revision, aprobado, publicado, rechazado
+    published_books = database.Column(database.Integer, nullable=True)
+    profit_percentage = database.Column(database.Double, nullable=True)
 
     author_id = database.Column(database.Integer, database.ForeignKey('users.id'))
     
@@ -33,6 +36,9 @@ class Book(database.Model):
     publish_date = database.Column(database.DateTime, default=database.func.now())
     last_update = database.Column(database.DateTime, default=database.func.now(), onupdate=database.func.now())
 
+    @property
+    def get_profit(self):
+        return self.price * (self.profit_percentage / 100)
 
 class Cart(database.Model):
     __tablename__ = 'carts'
