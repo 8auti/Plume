@@ -5,7 +5,8 @@ import mimetypes
 from flask import Blueprint, render_template, request, flash, url_for, redirect
 from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
-from ..models.models import Book, database
+from app.models.models import Book, database
+from ..book.genres import genres
 from dotenv import load_dotenv
 
 # Acceder a variables de entorno
@@ -32,7 +33,8 @@ def dashboard():
 def upload_image(file):
     filename = secure_filename(file.filename)
     if not filename:
-        return render_template("upload.html", error="El archivo no tiene un nombre válido")
+        flash("El archivo subido no tiene un nombre válido.", "danger")
+        return
 
     content_type = mimetypes.guess_type(filename)[0] or "application/octet-stream"
 
@@ -69,12 +71,18 @@ def create():
         title = request.form["title"]
         pages = request.form["pages"]
         description = request.form["description"]
+        genre = request.form.get('genre')
         price = request.form["price"]
         cover = request.files["cover"]
 
         if (not title or not pages or not price):
             flash("Completa todos los campos", "danger")
             return redirect(url_for('admin.create'))
+        
+        # Validar que el genero sea autentico
+        if (genre not in genres and genre != ''): # Permitir que el genero sea un string vacio (Ninguno)
+            flash("Genero invalido.", "danger")
+            return render_template('admin/form.html', genres = genres)
 
         # Portada
         cover_url = upload_image(cover)
@@ -82,14 +90,21 @@ def create():
         # fk usuario escritor
         author_id = current_user.id
 
-        new_book = Book(title=title, pages=pages, description=description, author_id=author_id, cover_url = cover_url)
+        new_book = Book(
+            title=title, 
+            pages=pages, 
+            description=description, 
+            genre = genre, 
+            author_id=author_id, 
+            cover_url = cover_url
+        )
 
         database.session.add(new_book)
         database.session.commit()
         flash("Libro agregado exitosamente", "success")
 
         return redirect(url_for('admin.dashboard'))
-    return render_template("admin/form.html")
+    return render_template("admin/form.html", genres=genres)
 
 
 # Editar libro
@@ -104,7 +119,15 @@ def edit(id):
         book.pages = request.form.get('pages')
         book.description = request.form.get('description')
         book.price = request.form.get('price')
+        genre = request.form.get('genre')
         cover = request.files["cover"]
+
+        # Validar que el genero sea autentico
+        if (genre not in genres and genre != ''): # Permitir que el genero sea un string vacio (Ninguno)
+            flash("Genero invalido.", "danger")
+            return render_template('admin/form.html', book=book, genres = genres)
+
+        book.genre = genre
 
         if (cover or cover.filename != ''):
             book.cover_url = upload_image(cover) or book.cover_url
@@ -114,7 +137,7 @@ def edit(id):
 
         return redirect(url_for('admin.dashboard'))
     
-    return render_template('admin/form.html', book=book)  # pasa el libro
+    return render_template('admin/form.html', book=book, genres = genres)
 
 
 

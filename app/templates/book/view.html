@@ -17,17 +17,30 @@
         <div class="position-fixed top-0 start-0 w-100 h-100 bg-dark" 
              style="opacity: 0.3; z-index: -1;"></div>
         
-        <div class="container">
+        <div class="container mb-5">
             <div class="row align-items-center">
                 <!-- Portada del libro -->
                 <div class="col-md-4 text-center text-md-start mb-4 mb-md-0">
                     <img src="{{ book.cover_url or 'https://placehold.co/400x600' }}" class="img-fluid rounded shadow-lg book-cover-large"
-                        style="max-width: 280px;" alt="{{ book.title }}">
+                        style="max-width: 50vh;" alt="{{ book.title }}">
                 </div>
                 
                 <!-- Información del libro -->
                 <div class="col-md-8">
-                    <h1 class="display-4 fw-bold mb-5">{{ book.title }}</h1>
+                    <h1 class="display-4 fw-bold">{{ book.title }}</h1>
+
+                    <!-- Géneros/Tags -->
+                    <div class="container-fluid">
+                        {% if book.genre %}
+                        <span style="background-color: {{genres[book.genre].color}}" 
+                            class="badge rounded-pill px-3 py-2 me-2 mb-5 mt-4">
+                            {{ genres[book.genre].label }}
+                        </span>
+                        {% endif %}
+                        <span class="badge rounded-pill bg-primary px-3 py-2 me-2 mb-5 mt-4">
+                            Nuevo!
+                        </span>
+                    </div>
                     
                     <!-- Autor con avatar -->
                     <div class="d-flex align-items-center mb-3">
@@ -68,24 +81,15 @@
     </div>
     
     <!-- Contenido principal con fondo blanco -->
-    <div class="bg-white">
+    <div class="bg-white z-2">
         <div class="container py-5 w-90">
 
             <!-- Sección: Sinopsis -->
-            <div class="mb-5">
+            <div class="mb-5 card p-5">
                 <h3 class="fw-bold mb-3"><i class="bi bi-card-text"></i> Sinopsis</h3>
                 <p class="text-muted lh-lg">
                     {{ book.description if book.description else 'No hay descripción disponible para este libro.' }}
                 </p>
-
-                <!-- Géneros/Tags -->
-                <div class="mt-4">
-                    {% if book.genre %}
-                    <span class="badge bg-primary rounded-pill px-3 py-2 me-2">{{ book.genre }}</span>
-                    {% endif %}
-                    <span class="badge bg-info rounded-pill px-3 py-2 me-2">Aventura</span>
-                    <span class="badge bg-success rounded-pill px-3 py-2">Magia</span>
-                </div>
             </div>
 
             <!-- Sección: Libros por el autor -->
@@ -126,7 +130,10 @@
     }
     
     .card {
+        border: none;
+        border-radius: 12px;
         transition: transform 0.2s ease, box-shadow 0.2s ease;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15);
         cursor: pointer;
     }
     

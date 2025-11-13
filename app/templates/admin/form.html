@@ -63,6 +63,20 @@
                                     <div class="form-text">Una buena descripción ayuda a los lectores a descubrir tu libro.</div>
                                 </div>
 
+                                <div class="mb-3">
+                                    <label for="genre" class="form-label fw-semibold">
+                                        Genero
+                                    </label>
+                                    <select class="form-select" id="genre" name="genre">
+                                        <option value="">Ninguno</option>
+                                        {% for value, data in genres.items() %}
+                                            <option value="{{ value }}" {% if book and book.genre == value %}selected{% endif %}>
+                                                {{ data.label }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
                                 <!-- Precio y Páginas en fila -->
                                 <div class="row">
                                     <div class="col-md-6 mb-3">

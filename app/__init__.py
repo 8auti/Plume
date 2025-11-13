@@ -1,15 +1,17 @@
 from flask import Flask
 from flask_login import LoginManager
-
-from .models.models import database, User
+from dotenv import load_dotenv
+import os
+from app.models.models import database, User
 
 login_manager = LoginManager()
 
 def create_app():
     app = Flask(__name__)
+    load_dotenv()
 
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
-    app.config['SECRET_KEY'] = 'supersecretkey'
+    app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
     
     # Init
     database.init_app(app)
@@ -27,11 +29,11 @@ def create_app():
         return User.query.get(int(user_id))
 
     # Imports
-    from app.main.routes import main
-    from app.book.routes import book
-    from app.auth.routes import auth
-    from app.shop.routes import shop
-    from app.admin.routes import admin
+    from app.blueprints.main.routes import main
+    from app.blueprints.book.routes import book
+    from app.blueprints.auth.routes import auth
+    from app.blueprints.shop.routes import shop
+    from app.blueprints.admin.routes import admin
 
     # Registers
     app.register_blueprint(main)

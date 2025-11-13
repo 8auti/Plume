@@ -19,6 +19,7 @@ class Book(database.Model):
     id = database.Column(database.Integer, primary_key=True)
     title = database.Column(database.String(100), nullable=False, default='Libro')
     description = database.Column(database.Text, nullable=True)
+    genre = database.Column(database.String(20), nullable=False)
     pages = database.Column(database.Integer, nullable=True)
     price = database.Column(database.Float, default=15000.0)
     status = database.Column(database.String(50), default='draft')  # draft, in_review, approved, published

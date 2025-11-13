@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, session
 from flask_login import login_required, current_user
-from ..models.models import Book, Cart, CartItem, database
+from app.models.models import Book, Cart, CartItem, database
 
 shop = Blueprint("shop", __name__)
 
