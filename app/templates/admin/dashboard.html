@@ -26,7 +26,9 @@
                             <th>Páginas</th>
                             <th>Actualizado</th>
                             <th>Creacion</th>
+                            {% if current_user.type == 'editor' %}
                             <th>Escritor</th>
+                            {% endif %}
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -39,15 +41,23 @@
                                 <td>{{ b.pages }}</td>
                                 <td>{{ b.last_update|humanize }}</td>
                                 <td>{{ b.publish_date|humanize }}</td>
+                                {% if current_user.type == 'editor' %}
                                 <td>{{ b.author.name }}</td>
+                                {% endif %}
 
                                 <!-- Eliminar y Editar -->
                                 
                                 <td>
-                                    <a href="{{ url_for('admin.edit', id=b.id) }}" class="btn btn-sm btn-outline-primary me-2">
+                                    <a href="{{ url_for('admin.edit', id=b.id) }}" class="btn btn-sm btn-outline-primary">
                                         <i class="bi bi-pencil-fill"></i>
                                         Editar
                                     </a>
+                                    <form action="{{ url_for('admin.dashboard', id=b.id) }}" method="POST" style="display: inline;">
+                                        <button type="submit" class="btn btn-sm btn-outline-warning">
+                                            <i class="bi bi-chat-fill"></i>
+                                            Chat
+                                        </button>
+                                    </form>
                                     {% if current_user.type == 'escritor' %}
                                     <form action="{{ url_for('admin.delete', id=b.id) }}" method="POST" style="display: inline;">
                                         <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Eliminar este libro?')">
