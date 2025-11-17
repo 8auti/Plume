@@ -2,8 +2,8 @@
 Flask==3.1.1
 
 # --- Extensiones de Flask ---
-Flask-SQLAlchemy==3.0.5
-SQLAlchemy==2.0.25
+Flask-SQLAlchemy==3.1.1
+SQLAlchemy==2.0.36
 Flask-Bcrypt==1.0.1
 Flask-Login==0.6.3
 
